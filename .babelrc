@@ -1,0 +1,17 @@
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": "current",
+        "browsers": ["last 2 versions"]
+      }
+    }],
+    "stage-2",
+    "react"
+  ],
+  "plugins": [
+    "universal-import",
+    "transform-decorators-legacy",
+    "transform-class-properties"
+  ]
+}
