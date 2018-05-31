@@ -33,6 +33,15 @@ module.exports = {
                 }
             }
         }, {
+            test: /\.pem$/,
+            use: {
+                loader: 'file-loader',
+                options: {
+                    name: 'certs/[name].[ext]',
+                    publicPath: join(__dirname, '../public')
+                }
+            }
+        }, {
             test: /\.css$/,
             use: [
                 'style-loader',

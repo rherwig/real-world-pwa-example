@@ -1,5 +1,4 @@
 const merge = require('webpack-merge');
-const webpack = require('webpack');
 const common = require('./common');
 const join = require('path').join;
 const extendedNodeExternals = require('../scripts/extended-node-externals');
@@ -7,6 +6,7 @@ const extendedNodeExternals = require('../scripts/extended-node-externals');
 module.exports = merge(common, {
     mode: 'production',
     target: 'node',
+    devtool: 'hidden-source-map',
     externals: extendedNodeExternals,
     node: {
         __dirname: false,
@@ -18,6 +18,6 @@ module.exports = merge(common, {
     ],
     output: {
         filename: 'index.js',
-        path: join(__dirname, '../public'),
+        path: join(__dirname, '../public')
     }
 });

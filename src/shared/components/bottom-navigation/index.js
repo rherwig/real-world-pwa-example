@@ -19,11 +19,14 @@ const NavItem = styled(NavLink)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  height: 100%;
   text-decoration: none;
-  color: #999;
+  color: #fff;
   
   &.active {
-    color: #fff;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.08);
   }
 `;
 

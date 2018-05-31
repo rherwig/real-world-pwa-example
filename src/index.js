@@ -1,7 +1,13 @@
 import express from 'express';
+import spdy from 'spdy';
+import { readFileSync } from 'fs';
 import { join } from 'path';
 import { log } from 'winston';
-import compression from 'compression';
+import helmet from 'helmet';
+import shrinkRay from 'shrink-ray';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /**
  * Configures hot reloading and assets paths for local development environment.
@@ -52,18 +58,54 @@ const configureProduction = app => {
     );
 };
 
+const getCertificate = isDevelopment => {
+    const certFile = isDevelopment
+        ? join(__dirname, 'server/certs/cert.pem')
+        : require('./server/certs/cert.pem');
+
+    const keyFile = isDevelopment
+        ? join(__dirname, 'server/certs/key.pem')
+        : require('./server/certs/key.pem');
+
+    return {
+        cert: readFileSync(certFile),
+        key: readFileSync(keyFile)
+    };
+};
+
+const createServer = app => {
+    const { USE_SSL } = process.env;
+
+    if (USE_SSL === 'true') {
+        const { cert, key } = getCertificate(isDevelopment);
+        return spdy.createServer({
+            key,
+            cert
+        }, app);
+    }
+
+    return app;
+};
+
 const app = express();
 
-app.use(compression());
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+app.use(helmet());
+app.use(shrinkRay({
+    filter: () => !isDevelopment
+}));
 
 log('info', `Configuring server for environment: ${process.env.NODE_ENV}...`);
-if (process.env.NODE_ENV === 'development') {
+if (isDevelopment) {
     configureDevelopment(app);
 } else {
     configureProduction(app);
 }
 
-log('info', 'Configuring server engine...');
+log('info', 'Spawning server...');
 app.set('port', process.env.PORT || 3000);
 
-app.listen(3000);
+createServer(app).listen(app.get('port'), () =>
+    log('info', `Server listening on port ${app.get('port')}...`)
+);

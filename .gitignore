@@ -4,7 +4,11 @@
 # NodeJS
 node_modules
 
+# Certificates
+*.pem
+
 # Project
+.env
 public/**.json
 public/assets
 public/index.js
